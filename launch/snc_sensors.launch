@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<launch>
+    <master auto="start"/>
+
+    <node pkg="snc_sensors_publisher" type="snc.py" respawn="false" name="snc_sensors_publisher" output="screen">
+        <rosparam file="$(find snc_sensors_publisher)/config/parameters.yaml" command="load" />
+    </node>
+</launch>
