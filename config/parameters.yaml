@@ -3,4 +3,4 @@ username: 'gstavrinos'
 password: 'test'
 installation_id: '00000000-0000-0000-0000-b827eb9a72ca'
 publish_topic: 'snc_sensors/status'
-interval: 10 # in seconds
+interval: 600 # in seconds

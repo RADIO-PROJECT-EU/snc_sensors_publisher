@@ -7,6 +7,9 @@ import requests
 from snc_sensors_publisher.msg import SnCSensor
 from snc_sensors_publisher.msg import SnCSensorsMsg
 
+
+import datetime
+
 def init():
     rospy.init_node("snc_sensors_publisher")
 
@@ -34,30 +37,35 @@ def init():
         msg = SnCSensorsMsg()
         sensors = []
 
-        for i in range(len(sensor_ids)):
-            sensor = SnCSensor()
+        try:
+            for i in range(len(sensor_ids)):
+                sensor = SnCSensor()
 
-            jsn =  json.loads(s.get(api_url + 'sensors/' + sensor_ids[i] + '/details?format=json').text)
-            jsn = jsn['Sensor']
-            sensor.id = sensor_ids[i]
-            sensor.name = sensor_names[i]
+                jsn =  json.loads(s.get(api_url + 'sensors/' + sensor_ids[i] + '/details?format=json').text)
+                jsn = jsn['Sensor']
+                sensor.id = sensor_ids[i]
+                sensor.name = sensor_names[i]
 
-            try:
-                sensor.status = jsn['Status']
-            except:
-                sensor.status = 'N/A'
-            try:
-                sensor.value = jsn['Value']
-            except:
-                sensor.value = -999999
+                try:
+                    sensor.status = jsn['Status']
+                except:
+                    sensor.status = 'N/A'
+                try:
+                    sensor.value = jsn['Value']
+                except:
+                    sensor.value = -999999
 
-            sensors.append(sensor)
+                sensors.append(sensor)
 
-        msg.header.stamp = rospy.Time.now()
-        msg.sensors = sensors
-        publisher.publish(msg)
-
-        time.sleep(interval)
+            msg.header.stamp = rospy.Time.now()
+            msg.sensors = sensors
+            publisher.publish(msg)
+            print datetime.datetime.now()
+            time.sleep(interval)
+        except:
+            # Do we get here because of an expired session?
+            s.post(api_url + 'auth?format=json&username=' + username + '&password=' + password)
+            print 'ERROR!!'
 
 
 if __name__ == '__main__':
