@@ -4,6 +4,7 @@ import json
 import rospy
 import string
 import requests
+import traceback
 from snc_sensors_publisher.msg import SnCSensor
 from snc_sensors_publisher.msg import SnCSensorsMsg
 
@@ -22,7 +23,14 @@ def init():
     publisher = rospy.Publisher(publish_topic, SnCSensorsMsg, queue_size=1)
 
     s = requests.Session()
-    s.post(api_url + 'auth?format=json&username=' + username + '&password=' + password)
+    auth = False
+    while not auth:
+        try:
+            s.post(api_url + 'auth?format=json&username=' + username + '&password=' + password)
+            auth = True
+        except:
+            print traceback.format_exc()
+            time.sleep(10)
     jsn =  json.loads(s.get(api_url + '/installations/00000000-0000-0000-0000-b827eb9a72ca/sensors?format=json').text)
     
     sensor_ids = []
@@ -60,12 +68,15 @@ def init():
             msg.header.stamp = rospy.Time.now()
             msg.sensors = sensors
             publisher.publish(msg)
-            print datetime.datetime.now()
+            #print datetime.datetime.now()
             time.sleep(interval)
         except:
             # Do we get here because of an expired session?
-            s.post(api_url + 'auth?format=json&username=' + username + '&password=' + password)
-            print 'ERROR!!'
+            print traceback.format_exc()
+	    try:
+                s.post(api_url + 'auth?format=json&username=' + username + '&password=' + password)
+            except:
+                print traceback.format_exc()
 
 
 if __name__ == '__main__':
