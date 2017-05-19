@@ -2,5 +2,7 @@ api_url: 'https://dev.encontrol.io/api/'
 username: 'gstavrinos'
 password: 'test'
 installation_id: '00000000-0000-0000-0000-b827eb9a72ca'
-publish_topic: 'snc_sensors/status'
-interval: 1 # in seconds
+user_id: 543
+sensor_topic: 'snc_sensors/status'
+event_topic: 'snc_sensors/events'
+interval: 5 # in seconds
