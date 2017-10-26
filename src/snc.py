@@ -83,16 +83,17 @@ def init():
             jsn = jsn['Events']
             cnt = 0
             for j in jsn:
-                event = SnCSensor()
-                event.id = 'N/A'
-                event.name = j['Description']
-                event.status = j['Date']
-                event.value = 0
-                events.append(event)
-                # Add the five latest only, because the json response includes days of events!
-                cnt += 1
-                if cnt >= 5:
-                    break
+                if j['InstallationId'] == installationid:
+                    event = SnCSensor()
+                    event.id = j['InstallationId']
+                    event.name = j['Description']
+                    event.status = j['Date']
+                    event.value = 0
+                    events.append(event)
+                    # Add the ten latest only, because the json response includes days of events!
+                    cnt += 1
+                    if cnt >= 10:
+                        break
 
             msg.header.stamp = rospy.Time.now()
             msg.sensors = events
