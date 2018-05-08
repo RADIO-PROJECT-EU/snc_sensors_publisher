@@ -79,7 +79,8 @@ def init():
             msg = SnCSensorsMsg()
             events = []
 
-            jsn =  json.loads(s.get(api_url + '/users/'+str(userid)+'/events/').text)
+            jsn =  json.loads(s.get(api_url + '/events?UserId='+str(userid)+'&Type=control').text)
+            #https://dev.encontrol.io/api/events?UserId=543&Type=control
             jsn = jsn['Events']
             cnt = 0
             for j in jsn:
